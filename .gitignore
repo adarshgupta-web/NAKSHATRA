@@ -1,0 +1,34 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+
+# Firmware build output
+.pio/
+build/
+*.elf
+*.bin
+*.hex
+
+# Survey data (large / raw)
+data/*
+!data/README.md
+*.tif
+*.tiff
+*.las
+*.laz
+*.ubx
+*.obs
+*.nav
+*.pos
+odm_*/
