@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NAKSHATRA Surveyor (offline demo)</title><link rel="manifest" href="manifest.json">
+<style>
+body{font:16px/1.4 system-ui,sans-serif;margin:0;background:#f6f7f9;color:#1b2a41}
+@media (prefers-color-scheme:dark){body{background:#10151c;color:#e6ebf2}.c{background:#18202b!important;border-color:#2c3744!important}input,button{background:#18202b;color:inherit}}
+header{padding:12px 16px;font-weight:700;border-bottom:1px solid #ccd}main{max-width:560px;margin:auto;padding:12px}
+.c{background:#fff;border:1px solid #d5dae1;border-radius:10px;padding:10px;margin:8px 0}
+button,input{font:inherit;padding:8px;border-radius:6px;border:1px solid #99a;margin:2px 0}button{cursor:pointer}
+.m{font-size:13px;opacity:.75}.done{border-left:5px solid #1a9850}.todo{border-left:5px solid #e08214}
+</style></head><body>
+<header>NAKSHATRA surveyor - field verification <span class="m">(offline)</span></header>
+<main>
+<p class="m">Works without internet once loaded. Phone GNSS is metre-level and <b>not survey-grade</b>; for real checks type in coordinates from an RTK rover. Data stays on this device until exported.</p>
+<div id="list"></div>
+<button id="exp">Export measurements (JSON)</button> <button id="clr">Clear</button>
+</main>
+<script src="tasks.js"></script>
+<script>
+const KEY='nakshatra.field', T=window.FIELD_TASKS||[];
+let M=(()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}})();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(M))}catch(e){}};
+function render(){document.getElementById('list').innerHTML=T.map(t=>{const m=M[t.edge]||[];
+ return `<div class="c ${m.length?'done':'todo'}"><b>${t.edge}</b> <span class="m">confidence ${t.confidence} - near (${t.where_m.join(', ')}) m local</span>
+ <div class="m">${m.length} point(s): ${m.map(p=>p.lat+','+p.lon+(p.acc?' +/-'+p.acc+'m':'')).join(' | ')}</div>
+ <button onclick="gps('${t.edge}')">Capture phone GNSS</button><br>
+ <input id="la${t.edge}" placeholder="lat" size="11"> <input id="lo${t.edge}" placeholder="lon" size="11"> <input id="h${t.edge}" placeholder="h (m)" size="6">
+ <button onclick="manual('${t.edge}')">Add rover point</button></div>`}).join('')||'<p>No tasks loaded.</p>'}
+function add(e,p){(M[e]=M[e]||[]).push({...p,at:new Date().toISOString()});save();render()}
+function gps(e){navigator.geolocation?navigator.geolocation.getCurrentPosition(
+ r=>add(e,{lat:+r.coords.latitude.toFixed(8),lon:+r.coords.longitude.toFixed(8),h:r.coords.altitude,acc:Math.round(r.coords.accuracy),src:'phone'}),
+ x=>alert('GNSS error: '+x.message),{enableHighAccuracy:true,timeout:20000}):alert('Geolocation unavailable')}
+function manual(e){const g=i=>parseFloat(document.getElementById(i+e).value);const lat=g('la'),lon=g('lo');
+ if(isNaN(lat)||isNaN(lon))return alert('Enter lat and lon');add(e,{lat,lon,h:g('h'),src:'rover'})}
+document.getElementById('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(M,null,1)],{type:'application/json'}));a.download='field_measurements.json';a.click()};
+document.getElementById('clr').onclick=()=>{if(confirm('Delete all stored measurements?')){M={};save();render()}};
+render();if('serviceWorker'in navigator)navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script></body></html>

@@ -1,0 +1,177 @@
+{
+ "fusion": {
+  "n_control": 8,
+  "stages": {
+   "helmert": {
+    "rmse_fit": 1.2890165429132556,
+    "rmse_loocv": 1.8373497289526275
+   },
+   "affine": {
+    "rmse_fit": 0.8669654927392609,
+    "rmse_loocv": 1.537958318140368
+   },
+   "tps": {
+    "rmse_fit": 1.0341183442207934e-07,
+    "rmse_loocv": 1.3115165506443747
+   }
+  },
+  "selected": "tps",
+  "loocv_residuals": [
+   1.3101250346976916,
+   1.5058119429221493,
+   0.6284812532600079,
+   0.6770465666875682,
+   0.8165717863757355,
+   1.196509674427951,
+   0.37752385771266445,
+   2.5850296325796456
+  ],
+  "flagged_control_points": []
+ },
+ "edges": [
+  {
+   "edge": 0,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": -0.5
+  },
+  {
+   "edge": 1,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": 0.0
+  },
+  {
+   "edge": 2,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": 0.25
+  },
+  {
+   "edge": 3,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": -0.25
+  },
+  {
+   "edge": 4,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": 0.0
+  },
+  {
+   "edge": 5,
+   "route": "FIELD_CHECK",
+   "confidence": 1.0,
+   "top_offset": -0.25
+  },
+  {
+   "edge": 6,
+   "route": "FIELD_CHECK",
+   "confidence": 1.0,
+   "top_offset": -0.25
+  },
+  {
+   "edge": 7,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": -0.25
+  },
+  {
+   "edge": 8,
+   "route": "FIELD_CHECK",
+   "confidence": 1.0,
+   "top_offset": 0.0
+  },
+  {
+   "edge": 9,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": 0.0
+  },
+  {
+   "edge": 10,
+   "route": "FIELD_CHECK",
+   "confidence": 1.0,
+   "top_offset": 0.0
+  },
+  {
+   "edge": 11,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": -0.25
+  },
+  {
+   "edge": 12,
+   "route": "HIGH",
+   "confidence": 0.7893485741675115,
+   "top_offset": 1.0
+  },
+  {
+   "edge": 13,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": 0.0
+  },
+  {
+   "edge": 14,
+   "route": "HIGH",
+   "confidence": 0.9115599322521455,
+   "top_offset": -0.25
+  },
+  {
+   "edge": 15,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": 0.75
+  },
+  {
+   "edge": 16,
+   "route": "HIGH",
+   "confidence": 0.8894399685813871,
+   "top_offset": 2.25
+  },
+  {
+   "edge": 17,
+   "route": "FIELD_CHECK",
+   "confidence": 1.0,
+   "top_offset": 0.25
+  },
+  {
+   "edge": 18,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": 0.25
+  },
+  {
+   "edge": 19,
+   "route": "HIGH",
+   "confidence": 0.8799282733738295,
+   "top_offset": 1.0
+  },
+  {
+   "edge": 20,
+   "route": "FIELD_CHECK",
+   "confidence": 0.6360071594149442,
+   "top_offset": 1.25
+  },
+  {
+   "edge": 21,
+   "route": "HIGH",
+   "confidence": 1.0,
+   "top_offset": 0.25
+  },
+  {
+   "edge": 22,
+   "route": "FIELD_CHECK",
+   "confidence": 1.0,
+   "top_offset": 0.0
+  },
+  {
+   "edge": 23,
+   "route": "FIELD_CHECK",
+   "confidence": 1.0,
+   "top_offset": 0.0
+  }
+ ]
+}

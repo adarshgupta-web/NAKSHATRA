@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NAKSHATRA - Officer Verification Console (demo)</title>
+<style>
+:root{--bg:#f6f7f9;--fg:#1b2a41;--card:#fff;--line:#d5dae1;--ok:#1a9850;--warn:#e08214;--bad:#c62828}
+@media (prefers-color-scheme:dark){:root{--bg:#10151c;--fg:#e6ebf2;--card:#18202b;--line:#2c3744}}
+body{margin:0;font:14px/1.45 "Segoe UI",Helvetica,Arial,sans-serif;background:var(--bg);color:var(--fg)}
+header{padding:12px 20px;border-bottom:1px solid var(--line);display:flex;gap:16px;align-items:baseline;flex-wrap:wrap}
+header h1{font-size:18px;margin:0}.tag{font-size:12px;padding:2px 8px;border-radius:10px;background:var(--warn);color:#fff}
+main{display:grid;grid-template-columns:minmax(300px,1.4fr) minmax(280px,1fr);gap:16px;padding:16px;max-width:1200px;margin:auto}
+@media(max-width:800px){main{grid-template-columns:1fr}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px}
+svg{width:100%;height:auto;background:var(--card)}
+.edge{cursor:pointer;stroke-width:3;fill:none}.edge:hover{stroke-width:5}
+table{width:100%;border-collapse:collapse;font-size:13px}th,td{padding:4px 6px;text-align:left;border-bottom:1px solid var(--line)}
+tr.row{cursor:pointer}tr.row:hover{background:rgba(127,127,127,.12)}
+button{font:inherit;padding:5px 10px;border:1px solid var(--line);border-radius:6px;background:var(--card);color:var(--fg);cursor:pointer}
+button.ok{border-color:var(--ok)}button.warn{border-color:var(--warn)}button.bad{border-color:var(--bad)}
+.pill{font-size:11px;padding:1px 7px;border-radius:9px;color:#fff}.s-HIGH{background:var(--ok)}.s-FIELD_CHECK{background:var(--warn)}
+.muted{opacity:.7}
+</style></head><body>
+<header><h1>NAKSHATRA - verification console</h1><span class="tag">synthetic demo data</span>
+<span class="muted" id="sum"></span>
+<span style="margin-left:auto"><button id="exp">Export decisions (JSON)</button></span></header>
+<main>
+<section class="card"><svg id="map" viewBox="0 0 260 200" aria-label="village boundary map"></svg>
+<p class="muted">Green = high confidence, amber = needs field check. Click an edge or a row. Decisions are stored in this browser only.</p></section>
+<section>
+<div class="card" id="detail"><b>Select an edge</b><p class="muted">Candidate boundaries, scores and probabilities appear here. Nothing is final until an authorised officer decides.</p></div>
+<div class="card" style="margin-top:12px"><b>Review queue (lowest confidence first)</b><table id="queue"></table></div>
+</section></main>
+<script src="console_data.js"></script>
+<script>
+const D=window.NAKSHATRA_DATA, svg=document.getElementById('map'), NS='http://www.w3.org/2000/svg';
+const KEY='nakshatra.decisions', dec=(()=>{try{return JSON.parse(localStorage.getItem(KEY))||{}}catch(e){return {}}})();
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(dec))}catch(e){}};
+const col=r=>r==='HIGH'?'#1a9850':'#e08214', Y=y=>195-y, X=x=>x+5;
+const mk=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const k in a)e.setAttribute(k,a[k]);(p||svg).appendChild(e);return e};
+document.getElementById('sum').textContent=`${D.summary.edges} edges - ${D.summary.high} high confidence - ${D.summary.field} for field check`;
+D.parcels.forEach(p=>{mk('polygon',{points:p.ring.map(q=>X(q[0])+','+Y(q[1])).join(' '),fill:'rgba(120,140,170,.10)',stroke:'none'});
+ const c=p.ring.reduce((a,q)=>[a[0]+q[0]/4,a[1]+q[1]/4],[0,0]);const t=mk('text',{x:X(c[0]),y:Y(c[1]),'text-anchor':'middle','font-size':5,fill:'currentColor'});t.textContent=p.id});
+const els={};
+D.edges.forEach(e=>{const h=e.hyps[0];const l=mk('line',{x1:X(h.p0[0]),y1:Y(h.p0[1]),x2:X(h.p1[0]),y2:Y(h.p1[1]),stroke:col(e.route),class:'edge'});
+ l.onclick=()=>show(e.id);els[e.id]=l});
+function show(id){const e=D.edges.find(x=>x.id===id),d=dec[id];
+ document.getElementById('detail').innerHTML=`<b>${id}</b> <span class="pill s-${e.route}">${e.route.replace('_',' ')}</span> confidence ${e.confidence}
+ <table><tr><th>offset (m)</th><th>score</th><th>prob</th></tr>${e.hyps.map((h,i)=>`<tr><td>${h.offset}${i?'':' (top)'}</td><td>${h.score}</td><td>${h.prob}</td></tr>`).join('')}</table>
+ <p>${d?`Decision: <b>${d.action}</b> <span class="muted">${d.at}</span>`:'<span class="muted">No decision yet</span>'}</p>
+ <button class="ok" onclick="decide('${id}','accept')">Accept</button> <button class="warn" onclick="decide('${id}','verify in field')">Verify in field</button> <button class="bad" onclick="decide('${id}','reassess')">Reassess</button>`;}
+function decide(id,action){dec[id]={action,at:new Date().toISOString()};save();show(id);queue()}
+function queue(){const rows=[...D.edges].sort((a,b)=>a.confidence-b.confidence).slice(0,12);
+ document.getElementById('queue').innerHTML='<tr><th>edge</th><th>conf.</th><th>decision</th></tr>'+rows.map(e=>`<tr class="row" onclick="show('${e.id}')"><td>${e.id}</td><td>${e.confidence}</td><td>${dec[e.id]?dec[e.id].action:'<span class="muted">pending</span>'}</td></tr>`).join('')}
+document.getElementById('exp').onclick=()=>{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(dec,null,1)],{type:'application/json'}));a.download='decisions.json';a.click()};
+queue();
+</script></body></html>

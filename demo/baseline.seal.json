@@ -1,0 +1,21 @@
+{
+ "version": 1,
+ "parent_seal_hash": null,
+ "sealed_at_utc": "2026-10-20T09:24:40+00:00",
+ "metadata": {
+  "village": "synthetic",
+  "ps": "26010",
+  "note": "demo data"
+ },
+ "files": {
+  "analysis.json": {
+   "sha256": "81556cf34506741ebb68f0b3bc3fbcd2bb03f702c6dd868fd85cf107cd3c1931",
+   "bytes": 2845
+  },
+  "parcels.geojson": {
+   "sha256": "ebaa281a0797d95233a399d0088c760322bbde369c92c65dbcc4de5f116a6ce9",
+   "bytes": 6256
+  }
+ },
+ "seal_hash": "c29e60e2837a435f65bc48c8204d39e7be4ded15674b57a3d0b29509abf98317"
+}
